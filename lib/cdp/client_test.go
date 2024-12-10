@@ -26,7 +26,7 @@ func TestBasic(t *testing.T) {
 
 	ctx := g.Context()
 
-	client := cdp.New().Logger(defaults.CDP).Start(cdp.MustConnectWS(launcher.New().MustLaunch()))
+	client := cdp.New().Context(ctx).Logger(defaults.CDP).Start(cdp.MustConnectWS(launcher.New().MustLaunch()))
 
 	defer func() {
 		_, _ = client.Call(ctx, "", "Browser.close", nil)
@@ -236,7 +236,7 @@ func TestSlowSend(t *testing.T) {
 		},
 	}
 
-	c := cdp.New().Start(ws)
+	c := cdp.New().Context(g.Context()).Start(ws)
 	_, err := c.Call(g.Context(), "1234567890", "method", 1)
 	g.E(err)
 }
@@ -272,8 +272,8 @@ func TestCancelCallLeak(t *testing.T) {
 			},
 		}
 
-		c := cdp.New().Start(ws)
 		ctx := g.Context()
+		c := cdp.New().Context(ctx).Start(ws)
 		ctx.Cancel()
 		_, _ = c.Call(ctx, "1234567890", "method", 1)
 	}
@@ -312,7 +312,7 @@ func TestConcurrentCall(t *testing.T) {
 		},
 	}
 
-	c := cdp.New().Start(ws)
+	c := cdp.New().Context(g.Context()).Start(ws)
 
 	for i := 0; i < 1000; i++ {
 		i := i
