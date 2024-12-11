@@ -50,7 +50,7 @@ type Client struct {
 
 	ctx context.Context
 
-	pending sync.Map    // pending requests
+	pending *sync.Map   // pending requests
 	event   chan *Event // events from browser
 
 	logger utils.Logger
