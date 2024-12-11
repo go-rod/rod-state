@@ -59,9 +59,10 @@ type Client struct {
 // New creates a cdp connection, all messages from Client.Event must be received or they will block the client.
 func New() *Client {
 	return &Client{
-		ctx:    context.Background(),
-		event:  make(chan *Event),
-		logger: defaults.CDP,
+		ctx:     context.Background(),
+		event:   make(chan *Event),
+		pending: &sync.Map{},
+		logger:  defaults.CDP,
 	}
 }
 
