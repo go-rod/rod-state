@@ -42,5 +42,5 @@ func StartWithURL(ctx context.Context, u string, h http.Header) (*Client, error)
 	if err != nil {
 		return nil, err
 	}
-	return New().Start(ws), nil
+	return New().Context(ctx).Start(ws), nil
 }

@@ -48,7 +48,9 @@ type Client struct {
 
 	ws WebSocketable
 
-	pending sync.Map    // pending requests
+	ctx context.Context
+
+	pending *sync.Map   // pending requests
 	event   chan *Event // events from browser
 
 	logger utils.Logger
@@ -57,9 +59,23 @@ type Client struct {
 // New creates a cdp connection, all messages from Client.Event must be received or they will block the client.
 func New() *Client {
 	return &Client{
-		event:  make(chan *Event),
-		logger: defaults.CDP,
+		ctx:     context.Background(),
+		event:   make(chan *Event),
+		pending: &sync.Map{},
+		logger:  defaults.CDP,
 	}
+}
+
+// GetContext of current instance.
+func (cdp *Client) GetContext() context.Context {
+	return cdp.ctx
+}
+
+// Context returns a clone with the specified ctx for chained sub-operations.
+func (cdp *Client) Context(ctx context.Context) *Client {
+	newObj := *cdp
+	newObj.ctx = ctx
+	return &newObj
 }
 
 // Logger sets the logger to log all the requests, responses, and events transferred between Rod and the browser.
